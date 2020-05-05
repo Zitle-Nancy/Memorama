@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 interface IProps{
@@ -51,9 +51,14 @@ function App(props:IProps) {
   const { size } = props;
   // const board = new Array(size).fill([...new Array(size).fill(1)]);
   const [board, setBoard] = useState(getBoard(size));
-  
+  const [won, setWon] = useState(false);
   const [matches, setMatches] = useState<Array<number>>([]);
   
+  useEffect(()=> {
+    console.log('use effect')
+    checkWinner()
+  }, [matches])
+
   const selectCell = (value:number) => {
     if(matches.includes(value)){
       return;
@@ -68,28 +73,34 @@ function App(props:IProps) {
   
     if(counter === 2){
       const isSame = tempValue === value;
-      if(isSame) {
-
-        // guardar que fue exitoso
-        console.log('son las mismas', value);
-        
+      if(isSame) {        
         setMatches([...matches, value])
       }
       counter = 0;
     }
   }
 
+  const checkWinner = () => {
+    const totalPairs = (size * size) / 2
+    if(matches.length === totalPairs){
+      setWon(true)
+    }
+  }
+  console.log(matches)
   return (
-    <div className="App">
-      {board.map((row)=> {
-        return(
-        <div className="row">
-          {row.map((item:number) => {
-            return (<div className="cell" onClick={() => selectCell(item)}>{item}</div>);
-          })}
-        </div>)
-      })}
-    </div>
+    <>
+      <div className="App">
+        {board.map((row)=> {
+          return(
+          <div className="row">
+            {row.map((item:number) => {
+              return (<div className="cell" onClick={() => selectCell(item)}>{item}</div>);
+            })}
+          </div>)
+        })}
+      </div>
+      {won && <p>Ganaste</p>}
+    </>
   );
 }
 
