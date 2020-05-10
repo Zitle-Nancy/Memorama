@@ -53,9 +53,13 @@ function App(props:IProps) {
   const [board, setBoard] = useState(getBoard(size));
   const [won, setWon] = useState(false);
   const [matches, setMatches] = useState<Array<number>>([]);
-  
+  const [hasFlippedCard, setHasFlippedCard] = useState(true);
+
+  setTimeout(()=>{
+    setHasFlippedCard(false);
+  }, 3000)
+
   useEffect(()=> {
-    console.log('use effect')
     checkWinner()
   }, [matches])
 
@@ -96,8 +100,10 @@ function App(props:IProps) {
               {row.map((item:number) => {
                 return (
                   <Card
+                    className={!hasFlippedCard ? 'flip-card' : ''}
                     onClick={() => selectCell(item)}
                     url={`/images/${item}.png`}
+                    hasFlippedCard={hasFlippedCard}
                   />
                 );
               })}
