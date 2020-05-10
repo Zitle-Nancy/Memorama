@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import { Container, Row, Card } from './styles';
 
 interface IProps{
   size: number
@@ -86,20 +86,26 @@ function App(props:IProps) {
       setWon(true)
     }
   }
-  console.log(matches)
+
   return (
     <>
-      <div className="App">
+      <Container>
         {board.map((row)=> {
           return(
-          <div className="row">
-            {row.map((item:number) => {
-              return (<div className="cell" onClick={() => selectCell(item)}>{item}</div>);
-            })}
-          </div>)
+            <Row>
+              {row.map((item:number) => {
+                return (
+                  <Card
+                    onClick={() => selectCell(item)}
+                    url={`/images/${item}.png`}
+                  />
+                );
+              })}
+            </Row>
+          )
         })}
-      </div>
-      {won && <p>Ganaste</p>}
+      </Container>
+      {won && <span>Ganaste</span>}
     </>
   );
 }
