@@ -4,6 +4,7 @@ import { Transform } from 'stream';
 interface ICard {
   url: string;
   hasFlippedCard: boolean;
+  isMatches: boolean;
 }
 
 export const Container = styled.div`
@@ -16,7 +17,7 @@ export const Card = styled.div<ICard>(props => `
   border: solid black 1px;
   width: 150px;
   height: 150px;
-  background-image:url(${props.hasFlippedCard ? `${props.url}` : '/images/incognito.jpg'});
+  background-image:url(${props.hasFlippedCard || props.isMatches ? `${props.url}` : '/images/incognito.jpg'});
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

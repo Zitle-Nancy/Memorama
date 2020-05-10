@@ -4,6 +4,7 @@ import { Container, Row, Card } from './styles';
 interface IProps{
   size: number
 }
+
 let counter = 0;
 let tempValue:number;
 
@@ -53,17 +54,19 @@ function App(props:IProps) {
   const [board, setBoard] = useState(getBoard(size));
   const [won, setWon] = useState(false);
   const [matches, setMatches] = useState<Array<number>>([]);
-  const [hasFlippedCard, setHasFlippedCard] = useState(true);
+  // const [hasFlippedCard, setHasFlippedCard] = useState(true);
+  const [isFlippedCard, setIsFlippedCard] = useState<{[key:string]:boolean}>({});
 
-  setTimeout(()=>{
-    setHasFlippedCard(false);
-  }, 3000)
+  // setTimeout(()=>{
+  //   setHasFlippedCard(false);
+  // }, 3000)
 
   useEffect(()=> {
     checkWinner()
   }, [matches])
 
-  const selectCell = (value:number) => {
+  const selectedCard = (value:number, coordinates:string) => {
+    console.log(coordinates,'coordinates')
     if(matches.includes(value)){
       return;
     }
@@ -72,11 +75,19 @@ function App(props:IProps) {
 
     if(counter === 1){
       tempValue = value;
+      setIsFlippedCard({
+        [`${tempValue}-${coordinates}`]: true
+      })
       return;
     }
   
     if(counter === 2){
       const isSame = tempValue === value;
+      setIsFlippedCard({
+        ...isFlippedCard,
+        [`${value}-${coordinates}`]: true
+      })
+
       if(isSame) {        
         setMatches([...matches, value])
       }
@@ -84,6 +95,7 @@ function App(props:IProps) {
     }
   }
 
+  console.log(isFlippedCard, 'flippedCards')
   const checkWinner = () => {
     const totalPairs = (size * size) / 2
     if(matches.length === totalPairs){
@@ -91,19 +103,28 @@ function App(props:IProps) {
     }
   }
 
+  const addStyledCard = (isSelectedCard:boolean,card:number ) => {
+    if(isSelectedCard){
+      return 'flip-card';
+    }
+    return ''
+  }
+
   return (
     <>
       <Container>
-        {board.map((row)=> {
+        {board.map((row,x)=> {
           return(
-            <Row>
-              {row.map((item:number) => {
+            <Row key={x}>
+              {row.map((item:number,y) => {
                 return (
                   <Card
-                    className={!hasFlippedCard ? 'flip-card' : ''}
-                    onClick={() => selectCell(item)}
+                    key={x-y}
+                    className={addStyledCard(isFlippedCard[`${item}-${x}${y}`], item)}
+                    onClick={() => selectedCard(item, `${x}${y}`)}
                     url={`/images/${item}.png`}
-                    hasFlippedCard={hasFlippedCard}
+                    hasFlippedCard={isFlippedCard[`${item}-${x}${y}`]}
+                    isMatches={matches.includes(item)}
                   />
                 );
               })}
